@@ -208,6 +208,9 @@ int main(void)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGui::Begin("Hello, world!");
+        ImGui::Text("This is a simple ImGui application.");
+        ImGui::End();
         ImGui::Render();
 
 
