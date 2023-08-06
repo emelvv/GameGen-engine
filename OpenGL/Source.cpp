@@ -13,8 +13,8 @@
 #include "Texture.hpp"
 
 
-int windowSizeX = 640;
-int windowSizeY = 480;
+int windowSizeX = 1920;
+int windowSizeY = 1080;
 
 
 float cube_points[] = {
@@ -184,13 +184,12 @@ int main(void)
     glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    //view matrix
-    glm::mat4 view;
-    view = glm::lookAt(cameraPos, cameraTarget, up);
+    ////view matrix
+    //glm::mat4 view;
+    //view = glm::lookAt(cameraPos, cameraTarget, up);
 
     //to uniform
     shader_program.SetMat4(model, "model");
-    shader_program.SetMat4(view, "view");
     shader_program.SetMat4(projection, "projection");
 
     // Setup ImGui context
@@ -201,23 +200,17 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
     ImGui_ImplOpenGL3_Init();
 
+
     glEnable(GL_DEPTH_TEST);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(pWindow))
     {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        ImGui::Begin("Hello, world!");
-        ImGui::Text("This is a simple ImGui application.");
-        ImGui::End();
-        ImGui::Render();
-
 
         /* Render here */
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //setup cubes
         glBindVertexArray(vao);
         for (unsigned int i=0; i < 10; i++) {
             glm::mat4 model(1.f);
@@ -227,20 +220,48 @@ int main(void)
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+
+
+        //setup imgui
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::SetNextWindowSize(ImVec2(500, 200));
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::Begin("Camera Settings");
+
+        // Добавьте три ползунка для изменения параметров направления камеры
+        ImGui::SliderFloat("Camera Target X", &cameraTarget.x, -30.0f, 30.0f);
+        ImGui::SliderFloat("Camera Target Y", &cameraTarget.y, -30.0f, 30.0f);
+        ImGui::SliderFloat("Camera Target Z", &cameraTarget.z, -30.0f, 30.0f);
+
+        // Добавьте три ползунка для изменения параметров положения камеры
+        ImGui::SliderFloat("Camera Position X", &cameraPos.x, -30.0f, 30.0f);
+        ImGui::SliderFloat("Camera Position Y", &cameraPos.y, -30.0f, 30.0f);
+        ImGui::SliderFloat("Camera Position Z", &cameraPos.z, -30.0f, 30.0f);
+
+        // Добавьте кнопку сброса к настройкам по умолчанию
+        if (ImGui::Button("Reset to Default"))
+        {
+            // Сброс параметров к значениям по умолчанию
+            cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+            cameraPos = glm::vec3(0.0f, 0.0f, -5.0f);
+        }
+
+        ImGui::End();
+
+        ImGui::Render();
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        //// render container
-        //glBindVertexArray(vao);
+        //changeable
+        ////view matrix
+        glm::mat4 view;
+        view = glm::lookAt(cameraPos, cameraTarget, up);
+        shader_program.SetMat4(view, "view");
 
-        //glm::mat4 model;
-        //model = glm::rotate(model, glm::radians((float)glfwGetTime() * 100), glm::vec3(1.f, 0.f, 1.f));
-        //shader_program.SetMat4(model, "model");
-
-        //// draw
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
+        //end
         glfwSwapBuffers(pWindow);
         glfwPollEvents();
     }
