@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,11 +13,7 @@
 #include "ShaderProgram.hpp"
 #include "Texture.hpp"
 
-
-int windowSizeX = 1920;
-int windowSizeY = 1080;
-
-
+//coordinates
 float cube_points[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -75,6 +72,26 @@ glm::vec3 cubePositions[] = {
     glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+//window
+int windowSizeX = 1920;
+int windowSizeY = 1080;
+bool cursorIsHidden = true;
+bool windowIsFocused = true;
+
+//deltaTime
+float lastFrame;
+float deltaTime;
+
+//camera
+float yaw = -90.f, pitch = 0.f;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 direction;
+float lastX = 400, lastY = 300;
+float cameraSpeed = 6.f;
+float cameraSens = 0.1f;
+
+
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int sizeX, int sizeY) {
     windowSizeX = sizeX;
@@ -82,19 +99,15 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int sizeX, int sizeY) {
     glViewport(0, 0, sizeX, sizeY);
 }
 
-
-void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == 1) {
-        glfwSetWindowShouldClose(pWindow, GL_TRUE);
-    }
-}
-
-
 static void glfwErrorCallback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+void processInput(GLFWwindow* window);
+void glfwMousePosCallback(GLFWwindow* window, double xpos, double ypos);
+void windowFocusCallback(GLFWwindow* window, int focused);
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main(void)
 {
@@ -121,6 +134,9 @@ int main(void)
     glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
     glfwSetKeyCallback(pWindow, glfwKeyCallback);
     glfwSetErrorCallback(glfwErrorCallback);
+    glfwSetCursorPosCallback(pWindow, glfwMousePosCallback);
+    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetWindowFocusCallback(pWindow, windowFocusCallback);
 
     /* Make the window's context current */
     glfwMakeContextCurrent(pWindow);
@@ -179,15 +195,6 @@ int main(void)
     glm::mat4 projection(1.0f);
     projection = glm::perspective(glm::radians(60.0f), (float)windowSizeX / (float)windowSizeY, 0.1f, 100.0f);
 
-    //setting camera
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -5.0f);
-    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    ////view matrix
-    //glm::mat4 view;
-    //view = glm::lookAt(cameraPos, cameraTarget, up);
-
     //to uniform
     shader_program.SetMat4(model, "model");
     shader_program.SetMat4(projection, "projection");
@@ -205,6 +212,13 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(pWindow))
     {
+        //calculating deltaTime
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        //input (работает лучше чем glfwKeyCallback)
+        processInput(pWindow);
 
         /* Render here */
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -220,35 +234,17 @@ int main(void)
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-
-
         //setup imgui
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::SetNextWindowSize(ImVec2(500, 200));
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::Begin("Camera Settings");
-
-        // Добавьте три ползунка для изменения параметров направления камеры
-        ImGui::SliderFloat("Camera Target X", &cameraTarget.x, -30.0f, 30.0f);
-        ImGui::SliderFloat("Camera Target Y", &cameraTarget.y, -30.0f, 30.0f);
-        ImGui::SliderFloat("Camera Target Z", &cameraTarget.z, -30.0f, 30.0f);
-
-        // Добавьте три ползунка для изменения параметров положения камеры
-        ImGui::SliderFloat("Camera Position X", &cameraPos.x, -30.0f, 30.0f);
-        ImGui::SliderFloat("Camera Position Y", &cameraPos.y, -30.0f, 30.0f);
-        ImGui::SliderFloat("Camera Position Z", &cameraPos.z, -30.0f, 30.0f);
-
-        // Добавьте кнопку сброса к настройкам по умолчанию
-        if (ImGui::Button("Reset to Default"))
-        {
-            // Сброс параметров к значениям по умолчанию
-            cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-            cameraPos = glm::vec3(0.0f, 0.0f, -5.0f);
-        }
-
+        ImGui::Begin("Debug Menu");
+        ImGui::InputFloat("Yaw", &yaw);
+        ImGui::InputFloat("Pitch", &pitch);
+        ImGui::SliderFloat("Movement Speed", &cameraSpeed, 0.0f, 10.0f);
+        ImGui::SliderFloat("Mouse Sensitivity", &cameraSens, 0.0f, 1.0f);
         ImGui::End();
 
         ImGui::Render();
@@ -256,10 +252,15 @@ int main(void)
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         //changeable
+
+        ////angles
+        direction = glm::normalize(glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)), sin(glm::radians(yaw)) * cos(glm::radians(pitch))));
+
         ////view matrix
         glm::mat4 view;
-        view = glm::lookAt(cameraPos, cameraTarget, up);
+        view = glm::lookAt(cameraPos, cameraPos + direction, cameraUp);
         shader_program.SetMat4(view, "view");
+
 
         //end
         glfwSwapBuffers(pWindow);
@@ -273,4 +274,76 @@ int main(void)
     glfwDestroyWindow(pWindow);
     glfwTerminate();
     return 0;
+}
+
+void processWindow() {
+}
+
+void processInput(GLFWwindow* window)
+{
+    float speed = cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        speed = speed * 2;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += speed * direction * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= speed * direction * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(direction, cameraUp)) * speed * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(direction, cameraUp)) * speed * deltaTime;
+}
+
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+    if (key == GLFW_KEY_F && action == GLFW_PRESS && cursorIsHidden) {
+        cursorIsHidden = false;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    }
+    else if (key == GLFW_KEY_F && action == GLFW_PRESS && !cursorIsHidden) {
+        cursorIsHidden = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+}
+
+void glfwMousePosCallback(GLFWwindow* window, double xpos, double ypos) {
+    if (!windowIsFocused || !cursorIsHidden)
+        return;
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+    lastX = xpos;
+    lastY = ypos;
+
+    xoffset *= cameraSens;
+    yoffset *= cameraSens;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+}
+
+void windowFocusCallback(GLFWwindow* window, int focused)
+{
+    if (focused)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        cursorIsHidden = true;
+        windowIsFocused = true;
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        cursorIsHidden = false;
+        windowIsFocused = false;
+    }
 }
