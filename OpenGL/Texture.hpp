@@ -4,7 +4,7 @@
 #include <STB/stb_image.h>
 #include <iostream>
 
-namespace Renderer {
+namespace Engine {
 
 	class Texture
 	{

@@ -12,6 +12,7 @@
 #include <IMGUI/imgui_impl_opengl3.h>
 #include "ShaderProgram.hpp"
 #include "Texture.hpp"
+#include "Camera.hpp"
 
 //coordinates
 float cube_points[] = {
@@ -77,19 +78,22 @@ int windowSizeX = 1920;
 int windowSizeY = 1080;
 bool cursorIsHidden = true;
 bool windowIsFocused = true;
+double mouseX, mouseY;
+float lastX = 400, lastY = 300;
 
 //deltaTime
 float lastFrame;
 float deltaTime;
 
 //camera
-float yaw = -90.f, pitch = 0.f;
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 direction;
-float lastX = 400, lastY = 300;
+Engine::Camera camera(70.f, 100.f, &windowSizeX, &windowSizeY, glm::vec3(0.f, 0.f, 6.f));
+//float yaw = -90.f, pitch = 0.f;
+//glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+//glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 direction;
 float cameraSpeed = 6.f;
-float cameraSens = 0.1f;
+float cameraSens = 0.065f;
+
 
 
 
@@ -104,8 +108,8 @@ static void glfwErrorCallback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void processInput(GLFWwindow* window);
-void glfwMousePosCallback(GLFWwindow* window, double xpos, double ypos);
+void keysUpdate(GLFWwindow* window);
+void mouseUpdate(GLFWwindow* window);
 void windowFocusCallback(GLFWwindow* window, int focused);
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -134,7 +138,6 @@ int main(void)
     glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
     glfwSetKeyCallback(pWindow, glfwKeyCallback);
     glfwSetErrorCallback(glfwErrorCallback);
-    glfwSetCursorPosCallback(pWindow, glfwMousePosCallback);
     glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetWindowFocusCallback(pWindow, windowFocusCallback);
 
@@ -154,7 +157,7 @@ int main(void)
     bool show_main_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    Renderer::ShaderProgram shader_program("shaders/vShader.glsl", "shaders/fShader.glsl");
+    Engine::ShaderProgram program;
 
     GLuint vao = 0;
     glGenVertexArrays(1, &vao);
@@ -173,31 +176,29 @@ int main(void)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
 
     //TEXTURE 1
-    Renderer::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
+    Engine::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
     //TEXTURE2
-    Renderer::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, true);
+    Engine::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, true);
 
-    shader_program.Use(); // don't forget to activate/use the shader before setting uniforms!
+    program.Use(); // don't forget to activate/use the shader before setting uniforms!
     texture1.bind(0);
     texture2.bind(1);
 
-    glUniform1i(glGetUniformLocation(shader_program.Program, "texture1"), 0);
-    glUniform1i(glGetUniformLocation(shader_program.Program, "texture2"), 1);
+    program.Set1i(0, "texture1");
+    program.Set1i(1, "texture2");
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    //camera
+    camera.SetProg(&program);
 
     //transformation
     glm::mat4 model(1.0f);
     model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-    //projection matrix
-    glm::mat4 projection(1.0f);
-    projection = glm::perspective(glm::radians(60.0f), (float)windowSizeX / (float)windowSizeY, 0.1f, 100.0f);
-
     //to uniform
-    shader_program.SetMat4(model, "model");
-    shader_program.SetMat4(projection, "projection");
+    program.SetMat4(model, "model");
 
     // Setup ImGui context
     IMGUI_CHECKVERSION();
@@ -218,7 +219,8 @@ int main(void)
         lastFrame = currentFrame;
 
         //input (работает лучше чем glfwKeyCallback)
-        processInput(pWindow);
+        keysUpdate(pWindow);
+        mouseUpdate(pWindow);
 
         /* Render here */
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -226,11 +228,11 @@ int main(void)
 
         //setup cubes
         glBindVertexArray(vao);
-        for (unsigned int i=0; i < 10; i++) {
+        for (unsigned int i = 0; i < 10; i++) {
             glm::mat4 model(1.f);
             model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, glm::radians((float)glfwGetTime() * 30.0f * (i+1)), glm::vec3(i % 2, 1, i % 2));
-            shader_program.SetMat4(model, "model");
+            model = glm::rotate(model, glm::radians((float)glfwGetTime() * 30.0f * (i + 1)), glm::vec3(i % 2, 1, i % 2));
+            program.SetMat4(model, "model");
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
@@ -241,26 +243,20 @@ int main(void)
         ImGui::NewFrame();
         ImGui::SetNextWindowSize(ImVec2(500, 200));
         ImGui::Begin("Debug Menu");
-        ImGui::InputFloat("Yaw", &yaw);
-        ImGui::InputFloat("Pitch", &pitch);
+        ImGui::InputFloat("Yaw", &camera.yaw);
+        ImGui::InputFloat("Pitch", &camera.pitch);
         ImGui::SliderFloat("Movement Speed", &cameraSpeed, 0.0f, 10.0f);
         ImGui::SliderFloat("Mouse Sensitivity", &cameraSens, 0.0f, 1.0f);
+        ImGui::SliderFloat("FOV", &camera.fov, 50.f, 120.f);
+        ImGui::SliderFloat("Far Plane", &camera.farPlane, 60.f, 200.f);
         ImGui::End();
 
         ImGui::Render();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        //changeable
-
-        ////angles
-        direction = glm::normalize(glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)), sin(glm::radians(yaw)) * cos(glm::radians(pitch))));
-
         ////view matrix
-        glm::mat4 view;
-        view = glm::lookAt(cameraPos, cameraPos + direction, cameraUp);
-        shader_program.SetMat4(view, "view");
-
+        camera.Update();
 
         //end
         glfwSwapBuffers(pWindow);
@@ -276,22 +272,37 @@ int main(void)
     return 0;
 }
 
-void processWindow() {
-}
-
-void processInput(GLFWwindow* window)
+void keysUpdate(GLFWwindow* window)
 {
     float speed = cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = speed * 2;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += speed * direction * deltaTime;
+        camera.pos += speed * camera.direction * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= speed * direction * deltaTime;
+        camera.pos -= speed * camera.direction * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(direction, cameraUp)) * speed * deltaTime;
+        camera.pos -= camera.right * speed * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(direction, cameraUp)) * speed * deltaTime;
+        camera.pos += camera.right * speed * deltaTime;
+}
+
+void mouseUpdate(GLFWwindow* window) {
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+    if (!windowIsFocused || !cursorIsHidden)
+        return;
+    float xoffset = (float)mouseX - lastX;
+    float yoffset = lastY - (float)mouseY;
+    lastX = mouseX;
+    lastY = mouseY;
+
+    camera.yaw += xoffset * cameraSens;
+    camera.pitch += yoffset * cameraSens;
+
+    if (camera.pitch > 89.0f)
+        camera.pitch = 89.0f;
+    if (camera.pitch < -89.0f)
+        camera.pitch = -89.0f;
 }
 
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -312,25 +323,6 @@ void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int 
 
 }
 
-void glfwMousePosCallback(GLFWwindow* window, double xpos, double ypos) {
-    if (!windowIsFocused || !cursorIsHidden)
-        return;
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    xoffset *= cameraSens;
-    yoffset *= cameraSens;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-}
 
 void windowFocusCallback(GLFWwindow* window, int focused)
 {
