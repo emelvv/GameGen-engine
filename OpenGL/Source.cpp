@@ -14,8 +14,9 @@
 #include "Texture.hpp"
 #include "Camera.hpp"
 
-//coordinates
-float cube_points[] = {
+
+GLfloat cube_points[] = {
+    //coordinates         //texture
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
      0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -152,11 +153,6 @@ int main(void)
     std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
 
-
-
-    bool show_main_window = true;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     Engine::ShaderProgram program;
 
     GLuint vao = 0;
@@ -177,7 +173,7 @@ int main(void)
 
     //TEXTURE 1
     Engine::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
-    //TEXTURE2
+    //TEXTURE 2
     Engine::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, true);
 
     program.Use(); // don't forget to activate/use the shader before setting uniforms!
@@ -201,6 +197,9 @@ int main(void)
     program.SetMat4(model, "model");
 
     // Setup ImGui context
+    bool show_main_window = true;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
