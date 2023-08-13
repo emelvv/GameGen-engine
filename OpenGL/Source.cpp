@@ -13,6 +13,7 @@
 #include "ShaderProgram.hpp"
 #include "Texture.hpp"
 #include "Camera.hpp"
+#include "Object.hpp"
 
 
 GLfloat cube_points[] = {
@@ -154,15 +155,17 @@ int main(void)
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
 
     Engine::ShaderProgram program;
+    Engine::Object cube(&program, cube_points, "textures/container.jpg");
+    
+    //vao1
+    GLuint vao1 = 0;
+    glGenVertexArrays(1, &vao1);
+    glBindVertexArray(vao1);
 
-    GLuint vao = 0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
 
-
-    GLuint points_vbo = 0;
-    glGenBuffers(1, &points_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+    GLuint points_vbo1 = 0;
+    glGenBuffers(1, &points_vbo1);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo1);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube_points), cube_points, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -171,30 +174,36 @@ int main(void)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
 
-    //TEXTURE 1
-    Engine::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
-    //TEXTURE 2
-    Engine::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, true);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
-    program.Use(); // don't forget to activate/use the shader before setting uniforms!
-    texture1.bind(0);
-    texture2.bind(1);
+    //vao2
+    GLuint vao2 = 0;
+    glGenVertexArrays(1, &vao2);
+    glBindVertexArray(vao2);
 
-    program.Set1i(0, "texture1");
-    program.Set1i(1, "texture2");
+
+    GLuint points_vbo2 = 0;
+    glGenBuffers(1, &points_vbo2);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_points), cube_points, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    //TEXTURE 1
+    Engine::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
+    //TEXTURE 2
+    Engine::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, false);
+
     //camera
     camera.SetProg(&program);
-
-    //transformation
-    glm::mat4 model(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-    //to uniform
-    program.SetMat4(model, "model");
 
     // Setup ImGui context
     bool show_main_window = true;
@@ -226,14 +235,39 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //setup cubes
-        glBindVertexArray(vao);
-        for (unsigned int i = 0; i < 10; i++) {
-            glm::mat4 model(1.f);
-            model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, glm::radians((float)glfwGetTime() * 30.0f * (i + 1)), glm::vec3(i % 2, 1, i % 2));
-            program.SetMat4(model, "model");
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        //1
+        program.Use();
+        texture1.bind(0);
+
+        program.Set1i(0, "texture1");
+
+        glBindVertexArray(vao1);
+
+        glm::mat4 model1(1.f);
+        model1 = glm::translate(model1, cubePositions[2]);
+        model1 = glm::rotate(model1, glm::radians((float)glfwGetTime() * 30.0f * 3), glm::vec3(0, 1, 0));
+        program.SetMat4(model1, "model");
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindVertexArray(0);
+
+        //2
+        program.Use();
+        texture2.bind(0);
+
+        program.Set1i(0, "texture2");
+
+        glBindVertexArray(vao2);
+
+        glm::mat4 model2(1.f);
+        model2 = glm::translate(model2, cubePositions[3]);
+        model2 = glm::rotate(model2, glm::radians((float)glfwGetTime() * 30.0f * 4), glm::vec3(1, 1, 0));
+        program.SetMat4(model2, "model");
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindVertexArray(0);
+
+        cube.Draw();
 
         //setup imgui
 

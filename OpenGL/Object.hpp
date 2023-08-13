@@ -16,15 +16,10 @@ namespace Engine {
 	{
 	public:
 		glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
-		float yaw = 0, pitch = 0;
+		float yaw, pitch;
 
-		Object(ShaderProgram* program, float object_points[], const char* textureSrc);
+		Object(ShaderProgram* program, float object_points[], const char* textureSrc, glm::vec3 position, float yaw = 0.f, float pitch = 0.f);
 		~Object();
-
-
-		void SetPosition();
-		void SetYaw();
-		void SetPitch();
 		
 		void Draw();
 
@@ -36,20 +31,21 @@ namespace Engine {
 		GLuint vbo;
 	};
 
-	Object::Object(ShaderProgram* program, float object_points[], const char* textureSrc, glm::vec3 position, float yaw = 0, float pitch = 0)
+	Object::Object(ShaderProgram* program, float object_points[], const char* textureSrc, glm::vec3 position = glm::vec3(0.f, 0.f, 0.f), float yaw, float pitch)
 	{
 		this->program = program;
+		this->position = position;
+		this->yaw = yaw;
+		this->pitch = pitch;
 
-		GLuint vao = 0;
-		glGenVertexArrays(1, &vao);
-		this->vao = vao;
-		glBindVertexArray(vao);
+		this->vao = 0;
+		glGenVertexArrays(1, &this->vao);
+		glBindVertexArray(this->vao);
 
 
-		GLuint vbo = 0;
-		glGenBuffers(1, &vbo);
-		this->vbo = vbo;
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		this->vbo = 0;
+		glGenBuffers(1, &this->vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(object_points), object_points, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
@@ -73,12 +69,19 @@ namespace Engine {
 	void Object::Draw() {
 		(*this->program).Use();
 		(*this->texture1).bind(0);
-		(*program).Set1i(0, "texture1");
+		(*this->program).Set1i(0, "texture1");
 
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindVertexArray(this->vao);
+
+		//model matrix
+		glm::mat4 model(1.f);
+		model = glm::translate(model, this->position);
+		model = glm::rotate(model, (float)glfwGetTime() * 30.0f * 4, glm::vec3(1.0f, 1.0f, 0.0f));
+		(*this->program).SetMat4(model, "model");
+
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
 	}
 
 }

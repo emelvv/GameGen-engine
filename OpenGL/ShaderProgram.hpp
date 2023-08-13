@@ -24,6 +24,11 @@ namespace Engine {
 		void SetMat4(glm::mat4, const char*);
 		void Set1i(int newInt, const char* name);
 		void Use();
+
+		ShaderProgram(const ShaderProgram&) = delete;
+		ShaderProgram(ShaderProgram&&) = delete;
+		ShaderProgram& operator=(const ShaderProgram&) = delete;
+		ShaderProgram& operator=(ShaderProgram&&) = delete;
 	private:
 		void CheckShaderCompileError(GLuint shader);
 		void CreateShaderProgram(const char* vertexShader, const char* fragmentShader);

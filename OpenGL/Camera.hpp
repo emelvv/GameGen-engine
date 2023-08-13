@@ -15,25 +15,30 @@ namespace Engine {
 	class Camera {
 	public:
 
-		float yaw, pitch;
-		float fov;
-		float farPlane;
-		glm::vec3 pos;
-		glm::vec3 direction;
-		glm::vec3 right;
+		float yaw = -90, pitch = 0;
+		float fov = 60.f;
+		float farPlane = 100.f;
+		glm::vec3 pos = glm::vec3(0.f, 0.f, 0.f);
+		glm::vec3 direction = glm::vec3(0.f, 0.f, -1.f);
+		glm::vec3 right = glm::vec3(0.f, 1.f, 0.0f);
 		
 
-		Camera(float cameraFov, float farPlane, int* windowSizeX, int* windowSizeY, glm::vec3 cameraPos, float defaultYaw = -90.f, float defaultPitch = 0.f);
+		Camera(float cameraFov, float cameraFarPlane, int* winSizeX, int* winSizeY, glm::vec3 cameraPos, float defaultYaw = -90.f, float defaultPitch = 0.f);
 		
 
 		void Update();
 		void SetProg(Engine::ShaderProgram* prog);
 
+		Camera(const Camera&) = delete;
+		Camera(Camera&&) = delete;
+		Camera& operator=(const Camera&) = delete;
+		Camera& operator=(Camera&&) = delete;
+
 	private:
-		glm::mat4 view;
-		ShaderProgram* program;
-		int* windowSizeX;
-		int* windowSizeY;
+		glm::mat4 view = glm::mat4(1.f);
+		ShaderProgram* program = nullptr;
+		int* windowSizeX = nullptr;
+		int* windowSizeY = nullptr;
 	};
 
 

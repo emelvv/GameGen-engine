@@ -9,7 +9,7 @@ namespace Engine {
 	class Texture
 	{
 	public:
-		GLuint texture;
+		GLuint texture = 0;
 		int width;
 		int height;
 
