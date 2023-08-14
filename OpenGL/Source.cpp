@@ -123,6 +123,7 @@ int main(void)
         return -1;
     }
 
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -155,54 +156,14 @@ int main(void)
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
 
     Engine::ShaderProgram program;
-    Engine::Object cube(&program, cube_points, "textures/container.jpg");
     
-    //vao1
-    GLuint vao1 = 0;
-    glGenVertexArrays(1, &vao1);
-    glBindVertexArray(vao1);
+    Engine::Object cube1(&program, cube_points, sizeof(cube_points), "textures/prapor.jpg", cubePositions[2]);
+    Engine::Object cube2(&program, cube_points, sizeof(cube_points), "textures/container.jpg", cubePositions[3]);
+
+    Engine::Object cube(&program, cube_points, sizeof(cube_points), "textures/prapor.jpg");
 
 
-    GLuint points_vbo1 = 0;
-    glGenBuffers(1, &points_vbo1);
-    glBindBuffer(GL_ARRAY_BUFFER, points_vbo1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_points), cube_points, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    //vao2
-    GLuint vao2 = 0;
-    glGenVertexArrays(1, &vao2);
-    glBindVertexArray(vao2);
-
-
-    GLuint points_vbo2 = 0;
-    glGenBuffers(1, &points_vbo2);
-    glBindBuffer(GL_ARRAY_BUFFER, points_vbo2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_points), cube_points, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    //TEXTURE 1
-    Engine::Texture texture1("textures/container.jpg", GL_TEXTURE_2D, false);
-    //TEXTURE 2
-    Engine::Texture texture2("textures/prapor.jpg", GL_TEXTURE_2D, false);
-
-    //camera
+    //setup camera
     camera.SetProg(&program);
 
     // Setup ImGui context
@@ -235,37 +196,17 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //setup cubes
-        //1
-        program.Use();
-        texture1.bind(0);
-
-        program.Set1i(0, "texture1");
-
-        glBindVertexArray(vao1);
-
-        glm::mat4 model1(1.f);
-        model1 = glm::translate(model1, cubePositions[2]);
-        model1 = glm::rotate(model1, glm::radians((float)glfwGetTime() * 30.0f * 3), glm::vec3(0, 1, 0));
-        program.SetMat4(model1, "model");
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindVertexArray(0);
-
+        
         //2
-        program.Use();
-        texture2.bind(0);
+        cube2.rotationDirection = glm::vec3(1.f, 1.f, 0.f);
+        cube2.angle = 30.f * (float)glfwGetTime() * 4.f;
+        cube2.Draw();
 
-        program.Set1i(0, "texture2");
+        //1
+        cube1.rotationDirection = glm::vec3(0, 1, 0);
+        cube1.angle = 30.f * (float)glfwGetTime() * 2.f;
+        cube1.Draw();
 
-        glBindVertexArray(vao2);
-
-        glm::mat4 model2(1.f);
-        model2 = glm::translate(model2, cubePositions[3]);
-        model2 = glm::rotate(model2, glm::radians((float)glfwGetTime() * 30.0f * 4), glm::vec3(1, 1, 0));
-        program.SetMat4(model2, "model");
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindVertexArray(0);
 
         cube.Draw();
 

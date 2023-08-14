@@ -16,9 +16,10 @@ namespace Engine {
 	{
 	public:
 		glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
-		float yaw, pitch;
+		float angle = 0.f;
+		glm::vec3 rotationDirection = glm::vec3(0.f, 0.f, 0.f);
 
-		Object(ShaderProgram* program, float object_points[], const char* textureSrc, glm::vec3 position, float yaw = 0.f, float pitch = 0.f);
+		Object(ShaderProgram* program, float objectPoints[], int pointsSize, const char* textureSrc, glm::vec3 position = glm::vec3(0.f, 0.f, 0.f), float angle = 0.f, glm::vec3 rotationDirection = glm::vec3(0.f, 1.f, 0.f));
 		~Object();
 		
 		void Draw();
@@ -26,17 +27,17 @@ namespace Engine {
 
 	private:
 		ShaderProgram* program;
-		Texture* texture1;
+		Texture* texture;
 		GLuint vao;
 		GLuint vbo;
 	};
 
-	Object::Object(ShaderProgram* program, float object_points[], const char* textureSrc, glm::vec3 position = glm::vec3(0.f, 0.f, 0.f), float yaw, float pitch)
+	Object::Object(ShaderProgram* program, float objectPoints[], int pointsSize, const char* textureSrc, glm::vec3 position, float angle, glm::vec3 rotationDirection)
 	{
 		this->program = program;
 		this->position = position;
-		this->yaw = yaw;
-		this->pitch = pitch;
+		this->rotationDirection = rotationDirection;
+		this->angle = angle;
 
 		this->vao = 0;
 		glGenVertexArrays(1, &this->vao);
@@ -46,7 +47,7 @@ namespace Engine {
 		this->vbo = 0;
 		glGenBuffers(1, &this->vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(object_points), object_points, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, pointsSize, objectPoints, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
@@ -54,21 +55,22 @@ namespace Engine {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
 
-		Engine::Texture texture1(textureSrc, GL_TEXTURE_2D, false);
-		this->texture1 = &texture1;
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		texture1.unbind();
+
+		this->texture = new Engine::Texture(textureSrc, GL_TEXTURE_2D, false);
 	}
 
+	
 	Object::~Object()
 	{
 	}
 
 	void Object::Draw() {
 		(*this->program).Use();
-		(*this->texture1).bind(0);
+
+		//1
+		(*this->texture).bind(0);
 		(*this->program).Set1i(0, "texture1");
 
 		glBindVertexArray(this->vao);
@@ -76,12 +78,13 @@ namespace Engine {
 		//model matrix
 		glm::mat4 model(1.f);
 		model = glm::translate(model, this->position);
-		model = glm::rotate(model, (float)glfwGetTime() * 30.0f * 4, glm::vec3(1.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angle), rotationDirection);
 		(*this->program).SetMat4(model, "model");
-
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
+		(*this->texture).unbind();
+
 	}
 
 }
