@@ -22,7 +22,9 @@ namespace Engine {
 		ShaderProgram(const GLchar* vertexPath, const GLchar* fragmentPath);
 
 		void SetMat4(glm::mat4, const char*);
-		void Set1i(int newInt, const char* name);
+		void Set1i(const char* name, int newInt);
+		void Set3f(const char* name, float f1, float f2, float f3);
+		void Set1f(const char* name, float f1);
 		void Use();
 
 		ShaderProgram(const ShaderProgram&) = delete;
@@ -37,7 +39,10 @@ namespace Engine {
 		 R"(#version 450
 			layout(location = 0) in vec3 vertex_position;
 			layout(location = 1) in vec2 tex_position;
+			layout(location = 2) in vec3 normal;
 			out vec2 TexCoord;
+			out vec3 Normal;
+			out vec3 FragPos;			
 
 			uniform mat4 model;
 			uniform mat4 view;
@@ -46,19 +51,34 @@ namespace Engine {
 			void main() {
 				gl_Position = projection * view * model * vec4(vertex_position, 1.0);
 				TexCoord = tex_position;
+				Normal = normal;
+				FragPos = vec3(model * vec4(vertex_position, 1.0));
 			}
 		 )";
 
 		const GLchar* defaultFragmentShader =
 		 R"(#version 450
 			in vec2 TexCoord;
-			out vec4 frag_color;
+			in vec3 Normal;
+			in vec3 FragPos;
+			out vec4 frag_color; 
 
 			uniform sampler2D texture1;
 			uniform sampler2D texture2;
+			uniform vec3 lightPos;
+			uniform vec3 lightColor;
+			uniform float ambientStrength;
+
 
 			void main() {
-				frag_color = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5);
+				vec3 norm = normalize(Normal);
+				vec3 lightDir = normalize(lightPos - FragPos);
+				float diff = max(dot(norm, lightDir), 0.0);
+				vec3 diffuse = diff * vec3(1.0, 1.0, 1.0); 
+			
+				vec3 ambient = ambientStrength * lightColor;
+
+				frag_color = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5) * vec4((diffuse+ambient), 1.0);
 			}
 		 )";
 	};
@@ -95,6 +115,7 @@ namespace Engine {
 
 		glDeleteShader(vs);
 		glDeleteShader(fs);
+		this->Use();
 	}
 
 	ShaderProgram::ShaderProgram() {
@@ -143,8 +164,14 @@ namespace Engine {
 		glUniformMatrix4fv(glGetUniformLocation(this->Program, name), 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
-	void ShaderProgram::Set1i(int newInt, const char* name) {
+	void ShaderProgram::Set1i(const char* name, int newInt) {
 		glUniform1i(glGetUniformLocation(this->Program, name), newInt);
+	}
+	void ShaderProgram::Set3f(const char* name, float f1, float f2, float f3) {
+		glUniform3f(glGetUniformLocation(this->Program, name), f1, f2, f3);
+	}
+	void ShaderProgram::Set1f(const char* name, float f1) {
+		glUniform1f(glGetUniformLocation(this->Program, name), f1);
 	}
 
 

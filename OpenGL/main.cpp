@@ -14,51 +14,53 @@
 #include "Texture.hpp"
 #include "Camera.hpp"
 #include "Object.hpp"
+#include "ObjectList.hpp"
+#include "FPSManager.hpp"
 
 
 GLfloat cube_points[] = {
-    //coordinates         //texture
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    //coordinates         //texture     //normal
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f,  0.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   1.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0.0f, -1.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,   0.0f, -1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0.0f, -1.0f, 0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,   0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0f,  1.0f, 0.0f
 };
 
 
@@ -87,12 +89,18 @@ float lastX = 400, lastY = 300;
 float lastFrame;
 float deltaTime;
 
+//fps
+Engine::FPSManager fps;
+int fpsLimit = 144;
+
+//light 
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightColor(1.f, 1.f, 1.f);
+float ambientStrength = 0.2f;
+
+
 //camera
 Engine::Camera camera(70.f, 100.f, &windowSizeX, &windowSizeY, glm::vec3(0.f, 0.f, 6.f));
-//float yaw = -90.f, pitch = 0.f;
-//glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-//glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-//glm::vec3 direction;
 float cameraSpeed = 6.f;
 float cameraSens = 0.065f;
 
@@ -114,6 +122,7 @@ void keysUpdate(GLFWwindow* window);
 void mouseUpdate(GLFWwindow* window);
 void windowFocusCallback(GLFWwindow* window, int focused);
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 
 int main(void)
 {
@@ -155,16 +164,24 @@ int main(void)
     std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
 
+    //objects
     Engine::ShaderProgram program;
-    
-    Engine::Object cube1(&program, cube_points, sizeof(cube_points), "textures/prapor.jpg", cubePositions[2]);
-    Engine::Object cube2(&program, cube_points, sizeof(cube_points), "textures/container.jpg", cubePositions[3]);
 
-    Engine::Object cube(&program, cube_points, sizeof(cube_points), "textures/prapor.jpg");
+    Engine::ObjectList objs;
+    for (int i = 0; i < 10; i++) {
+        objs.Add(Engine::Object(&program, cube_points, sizeof(cube_points), "textures/orange.jpg", cubePositions[i]));
+    }
+
+    Engine::Object lightCube(&program, cube_points, sizeof(cube_points), "textures/white.jpg", glm::vec3(1.2f, 1.0f, 2.0f));
+    lightCube.scale = 0.2f;
 
 
     //setup camera
     camera.SetProg(&program);
+
+    //light
+    program.Set3f("lightColor", lightColor.x, lightColor.y, lightColor.z);
+
 
     // Setup ImGui context
     bool show_main_window = true;
@@ -177,7 +194,6 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
     ImGui_ImplOpenGL3_Init();
 
-
     glEnable(GL_DEPTH_TEST);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(pWindow))
@@ -187,28 +203,30 @@ int main(void)
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+
         //input (работает лучше чем glfwKeyCallback)
         keysUpdate(pWindow);
         mouseUpdate(pWindow);
 
         /* Render here */
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //setup cubes
-        
-        //2
-        cube2.rotationDirection = glm::vec3(1.f, 1.f, 0.f);
-        cube2.angle = 30.f * (float)glfwGetTime() * 4.f;
-        cube2.Draw();
+        //for (int i = 0; i < objs.Len(); i++) {
+        //    objs[i].angle = glm::radians((float)glfwGetTime() * 30.0f * (i + 1)*100);
+        //    objs[i].rotationDirection = glm::vec3(i % 2, 1, i % 2);
+        //}
 
-        //1
-        cube1.rotationDirection = glm::vec3(0, 1, 0);
-        cube1.angle = 30.f * (float)glfwGetTime() * 2.f;
-        cube1.Draw();
+        objs.DrawAll();
 
 
-        cube.Draw();
+        //light
+        lightPos = camera.pos + camera.direction * 6.f;
+
+        lightCube.position = lightPos;
+        program.Set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        program.Set1f("ambientStrength", ambientStrength);
+        lightCube.Draw();
 
         //setup imgui
 
@@ -217,12 +235,17 @@ int main(void)
         ImGui::NewFrame();
         ImGui::SetNextWindowSize(ImVec2(500, 200));
         ImGui::Begin("Debug Menu");
-        ImGui::InputFloat("Yaw", &camera.yaw);
-        ImGui::InputFloat("Pitch", &camera.pitch);
+        ImGui::Text("FPS: %d", fps.FPS);
+        ImGui::SameLine();
+        ImGui::Text("Yaw: %f", camera.yaw);
+        ImGui::SameLine();
+        ImGui::Text("Pitch: %f", camera.pitch);
+        ImGui::SliderInt("Fps Limit", &fpsLimit, 10.0f, 200.0f);
         ImGui::SliderFloat("Movement Speed", &cameraSpeed, 0.0f, 10.0f);
         ImGui::SliderFloat("Mouse Sensitivity", &cameraSens, 0.0f, 1.0f);
         ImGui::SliderFloat("FOV", &camera.fov, 50.f, 120.f);
         ImGui::SliderFloat("Far Plane", &camera.farPlane, 60.f, 200.f);
+        ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.f, 1.f);
         ImGui::End();
 
         ImGui::Render();
@@ -231,6 +254,10 @@ int main(void)
 
         ////view matrix
         camera.Update();
+
+        //fps
+        fps.Calc();
+        fps.Limit(fpsLimit);
 
         //end
         glfwSwapBuffers(pWindow);

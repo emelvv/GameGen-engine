@@ -15,8 +15,9 @@ namespace Engine {
 	class Object
 	{
 	public:
-		glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
 		float angle = 0.f;
+		float scale = 1.f;
+		glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
 		glm::vec3 rotationDirection = glm::vec3(0.f, 0.f, 0.f);
 
 		Object(ShaderProgram* program, float objectPoints[], int pointsSize, const char* textureSrc, glm::vec3 position = glm::vec3(0.f, 0.f, 0.f), float angle = 0.f, glm::vec3 rotationDirection = glm::vec3(0.f, 1.f, 0.f));
@@ -50,10 +51,13 @@ namespace Engine {
 		glBufferData(GL_ARRAY_BUFFER, pointsSize, objectPoints, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * (sizeof(GLfloat)), (GLvoid*)(3 * sizeof(GLfloat)));
+
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * (sizeof(GLfloat)), (GLvoid*)(5 * sizeof(GLfloat)));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -71,7 +75,7 @@ namespace Engine {
 
 		//1
 		(*this->texture).bind(0);
-		(*this->program).Set1i(0, "texture1");
+		(*this->program).Set1i("texture1", 0);
 
 		glBindVertexArray(this->vao);
 
@@ -79,6 +83,7 @@ namespace Engine {
 		glm::mat4 model(1.f);
 		model = glm::translate(model, this->position);
 		model = glm::rotate(model, glm::radians(angle), rotationDirection);
+		model = glm::scale(model, glm::vec3(scale));
 		(*this->program).SetMat4(model, "model");
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
