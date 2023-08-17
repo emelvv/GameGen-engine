@@ -51,7 +51,7 @@ namespace Engine {
 			void main() {
 				gl_Position = projection * view * model * vec4(vertex_position, 1.0);
 				TexCoord = tex_position;
-				Normal = normal;
+				Normal = mat3(transpose(inverse(model))) * normal;
 				FragPos = vec3(model * vec4(vertex_position, 1.0));
 			}
 		 )";
@@ -68,17 +68,28 @@ namespace Engine {
 			uniform vec3 lightPos;
 			uniform vec3 lightColor;
 			uniform float ambientStrength;
+			uniform float specularStrength;
+			uniform vec3 viewPos;
+
 
 
 			void main() {
+				//diffuse
 				vec3 norm = normalize(Normal);
 				vec3 lightDir = normalize(lightPos - FragPos);
 				float diff = max(dot(norm, lightDir), 0.0);
 				vec3 diffuse = diff * vec3(1.0, 1.0, 1.0); 
-			
+
+				//specular
+				vec3 viewDir = normalize(viewPos - FragPos);
+				vec3 reflectDir = reflect(-lightDir, norm); 
+				float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+				vec3 specular = specularStrength * spec * lightColor;  
+
+				//ambient
 				vec3 ambient = ambientStrength * lightColor;
 
-				frag_color = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5) * vec4((diffuse+ambient), 1.0);
+				frag_color = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.5) * vec4((diffuse+ambient+specular), 1.0);
 			}
 		 )";
 	};

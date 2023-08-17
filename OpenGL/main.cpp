@@ -97,13 +97,14 @@ int fpsLimit = 144;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 glm::vec3 lightColor(1.f, 1.f, 1.f);
 float ambientStrength = 0.2f;
+float specularStrength = 1.f;
 
 
 //camera
 Engine::Camera camera(70.f, 100.f, &windowSizeX, &windowSizeY, glm::vec3(0.f, 0.f, 6.f));
 float cameraSpeed = 6.f;
 float cameraSens = 0.065f;
-
+float isLightCubeAttach = true;
 
 
 
@@ -122,7 +123,7 @@ void keysUpdate(GLFWwindow* window);
 void mouseUpdate(GLFWwindow* window);
 void windowFocusCallback(GLFWwindow* window, int focused);
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 int main(void)
 {
@@ -152,6 +153,8 @@ int main(void)
     glfwSetErrorCallback(glfwErrorCallback);
     glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetWindowFocusCallback(pWindow, windowFocusCallback);
+    glfwSetMouseButtonCallback(pWindow, mouseButtonCallback);
+
 
     /* Make the window's context current */
     glfwMakeContextCurrent(pWindow);
@@ -209,23 +212,26 @@ int main(void)
         mouseUpdate(pWindow);
 
         /* Render here */
-        glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //for (int i = 0; i < objs.Len(); i++) {
-        //    objs[i].angle = glm::radians((float)glfwGetTime() * 30.0f * (i + 1)*100);
-        //    objs[i].rotationDirection = glm::vec3(i % 2, 1, i % 2);
-        //}
+        for (int i = 0; i < objs.Len(); i++) {
+            objs[i].angle = glm::radians((float)glfwGetTime() * 30.0f * (i + 1)*100);
+            objs[i].rotationDirection = glm::vec3(i % 2, 1, i % 2);
+        }
 
         objs.DrawAll();
 
 
         //light
-        lightPos = camera.pos + camera.direction * 6.f;
-
-        lightCube.position = lightPos;
+        if (isLightCubeAttach) {
+            lightPos = camera.pos + camera.direction * 6.f;
+            lightCube.position = lightPos;
+        }
         program.Set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
         program.Set1f("ambientStrength", ambientStrength);
+        program.Set1f("specularStrength", specularStrength);
+        program.Set3f("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
         lightCube.Draw();
 
         //setup imgui
@@ -246,6 +252,7 @@ int main(void)
         ImGui::SliderFloat("FOV", &camera.fov, 50.f, 120.f);
         ImGui::SliderFloat("Far Plane", &camera.farPlane, 60.f, 200.f);
         ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.f, 1.f);
+        ImGui::SliderFloat("Specular Strength", &specularStrength, 0.f, 3.f);
         ImGui::End();
 
         ImGui::Render();
@@ -322,6 +329,16 @@ void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
+}
+
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        isLightCubeAttach = false;
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        isLightCubeAttach = true;
+    }
 }
 
 
