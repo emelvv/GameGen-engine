@@ -1,7 +1,4 @@
 #pragma once
-
-// https://habr.com/ru/articles/313380/
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "ShaderProgram.hpp"
@@ -42,17 +39,21 @@ namespace Engine {
 			layout(location = 2) in vec3 normal;
 			out vec2 TexCoord;
 			out vec3 Normal;
-			out vec3 FragPos;			
+			out vec3 FragPos;		
+			out vec3 LightPos;	
 
 			uniform mat4 model;
 			uniform mat4 view;
 			uniform mat4 projection;
 
+			uniform vec3 lightPos;
+
 			void main() {
 				gl_Position = projection * view * model * vec4(vertex_position, 1.0);
 				TexCoord = tex_position;
-				Normal = mat3(transpose(inverse(model))) * normal;
-				FragPos = vec3(model * vec4(vertex_position, 1.0));
+				Normal = mat3(transpose(inverse(view * model))) * normal;
+				FragPos = vec3(view * model * vec4(vertex_position, 1.0));
+				LightPos = vec3(view * vec4(lightPos, 1.0));
 			}
 		 )";
 
@@ -61,27 +62,24 @@ namespace Engine {
 			in vec2 TexCoord;
 			in vec3 Normal;
 			in vec3 FragPos;
+			in vec3 LightPos;
 			out vec4 frag_color; 
 
 			uniform sampler2D texture1;
 			uniform sampler2D texture2;
-			uniform vec3 lightPos;
 			uniform vec3 lightColor;
 			uniform float ambientStrength;
 			uniform float specularStrength;
-			uniform vec3 viewPos;
-
-
 
 			void main() {
 				//diffuse
 				vec3 norm = normalize(Normal);
-				vec3 lightDir = normalize(lightPos - FragPos);
+				vec3 lightDir = normalize(LightPos - FragPos);
 				float diff = max(dot(norm, lightDir), 0.0);
-				vec3 diffuse = diff * vec3(1.0, 1.0, 1.0); 
+				vec3 diffuse = diff * lightColor; 
 
 				//specular
-				vec3 viewDir = normalize(viewPos - FragPos);
+				vec3 viewDir = normalize(-FragPos);
 				vec3 reflectDir = reflect(-lightDir, norm); 
 				float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
 				vec3 specular = specularStrength * spec * lightColor;  
@@ -155,10 +153,10 @@ namespace Engine {
 			vertexCode = vShaderStream.str();
 			fragmentCode = fShaderStream.str();
 
-#ifdef DEBUG
+			#ifdef DEBUG
 			std::cout << vertexCode << std::endl;
 			std::cout << fragmentCode << std::endl;
-#endif
+			#endif
 
 		}
 		catch (const std::exception* ex)

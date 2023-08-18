@@ -176,7 +176,10 @@ int main(void)
     }
 
     Engine::Object lightCube(&program, cube_points, sizeof(cube_points), "textures/white.jpg", glm::vec3(1.2f, 1.0f, 2.0f));
-    lightCube.scale = 0.2f;
+    lightCube.scale = glm::vec3(0.2f);
+
+    Engine::Object platform(&program, cube_points, sizeof(cube_points), "textures/gray.jpg", glm::vec3(0.f, -4.f, 0.f));
+    platform.scale = glm::vec3(100.f, 1.f, 100.f);
 
 
     //setup camera
@@ -221,6 +224,7 @@ int main(void)
         }
 
         objs.DrawAll();
+        platform.Draw();
 
 
         //light
@@ -233,7 +237,7 @@ int main(void)
         program.Set1f("specularStrength", specularStrength);
         program.Set3f("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
         lightCube.Draw();
-
+        
         //setup imgui
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -241,11 +245,8 @@ int main(void)
         ImGui::NewFrame();
         ImGui::SetNextWindowSize(ImVec2(500, 200));
         ImGui::Begin("Debug Menu");
-        ImGui::Text("FPS: %d", fps.FPS);
-        ImGui::SameLine();
-        ImGui::Text("Yaw: %f", camera.yaw);
-        ImGui::SameLine();
-        ImGui::Text("Pitch: %f", camera.pitch);
+        ImGui::Text("FPS: %d Yaw: %f Pitch: %f", fps.FPS, camera.yaw, camera.pitch);
+        ImGui::Text("pos.x: %f pos.y: %f pos.z: %f", camera.pos.x, camera.pos.y, camera.pos.z);
         ImGui::SliderInt("Fps Limit", &fpsLimit, 10.0f, 200.0f);
         ImGui::SliderFloat("Movement Speed", &cameraSpeed, 0.0f, 10.0f);
         ImGui::SliderFloat("Mouse Sensitivity", &cameraSens, 0.0f, 1.0f);
@@ -333,12 +334,13 @@ void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int 
 
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE && isLightCubeAttach) {
         isLightCubeAttach = false;
     }
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+    else {
         isLightCubeAttach = true;
     }
+
 }
 
 

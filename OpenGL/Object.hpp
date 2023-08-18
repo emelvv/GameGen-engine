@@ -16,7 +16,7 @@ namespace Engine {
 	{
 	public:
 		float angle = 0.f;
-		float scale = 1.f;
+		glm::vec3 scale = glm::vec3(1.f, 1.f, 1.f);
 		glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
 		glm::vec3 rotationDirection = glm::vec3(0.f, 0.f, 0.f);
 
@@ -83,7 +83,7 @@ namespace Engine {
 		glm::mat4 model(1.f);
 		model = glm::translate(model, this->position);
 		model = glm::rotate(model, glm::radians(angle), rotationDirection);
-		model = glm::scale(model, glm::vec3(scale));
+		model = glm::scale(model, scale);
 		(*this->program).SetMat4(model, "model");
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
