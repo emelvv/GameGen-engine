@@ -95,9 +95,6 @@ int fpsLimit = 144;
 
 //light 
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-glm::vec3 lightColor(1.f, 1.f, 1.f);
-float ambientStrength = 0.2f;
-float specularStrength = 1.f;
 
 
 //camera
@@ -185,8 +182,6 @@ int main(void)
     //setup camera
     camera.SetProg(&program);
 
-    //light
-    program.Set3f("lightColor", lightColor.x, lightColor.y, lightColor.z);
 
 
     // Setup ImGui context
@@ -223,21 +218,35 @@ int main(void)
             objs[i].rotationDirection = glm::vec3(i % 2, 1, i % 2);
         }
 
-        objs.DrawAll();
-        platform.Draw();
-
 
         //light
         if (isLightCubeAttach) {
             lightPos = camera.pos + camera.direction * 6.f;
             lightCube.position = lightPos;
         }
-        program.Set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
-        program.Set1f("ambientStrength", ambientStrength);
-        program.Set1f("specularStrength", specularStrength);
-        program.Set3f("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
-        lightCube.Draw();
+        program.Set3f("light.position", lightPos.x, lightPos.y, lightPos.z);
+        program.Set3f("material.ambient", 1.0f, 0.5f, 0.31f);
+        program.Set3f("material.diffuse", 1.0f, 0.5f, 0.31f);
+        program.Set3f("material.specular", 0.5f, 0.5f, 0.5f);
+        program.Set1f("material.shininess", 32.0f);
+
+        glm::vec3 lightColor;
+        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
+        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+        program.Set3f("light.ambient", ambientColor.x, ambientColor.y, ambientColor.z);
+        program.Set3f("light.diffuse", diffuseColor.x, diffuseColor.y, diffuseColor.z);
+        program.Set3f("light.specular", 1.0f, 1.0f, 1.0f);
+
+
         
+        //draw
+        objs.DrawAll();
+        platform.Draw();
+        lightCube.Draw();
+
         //setup imgui
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -252,8 +261,6 @@ int main(void)
         ImGui::SliderFloat("Mouse Sensitivity", &cameraSens, 0.0f, 1.0f);
         ImGui::SliderFloat("FOV", &camera.fov, 50.f, 120.f);
         ImGui::SliderFloat("Far Plane", &camera.farPlane, 60.f, 200.f);
-        ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.f, 1.f);
-        ImGui::SliderFloat("Specular Strength", &specularStrength, 0.f, 3.f);
         ImGui::End();
 
         ImGui::Render();
