@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6A3091E7-9B27-31E6-92ED-2869E688D82C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>docs</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\User\Desktop\test_engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\User\Desktop\test_engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\User\Desktop\test_engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\User\Desktop\test_engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\Doxyfile">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating HTML documentation</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Strawberry\c\bin\doxygen.exe
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3native.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\main.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\news.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\quick.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\moving.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compile.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\build.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\intro.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\context.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\monitor.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\window.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\input.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\vulkan.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compat.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\internal.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\DoxygenLayout.xml;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\header.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\footer.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\extra.css;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\spaces.svg;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\html\index.html</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating HTML documentation</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Strawberry\c\bin\doxygen.exe
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3native.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\main.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\news.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\quick.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\moving.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compile.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\build.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\intro.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\context.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\monitor.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\window.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\input.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\vulkan.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compat.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\internal.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\DoxygenLayout.xml;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\header.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\footer.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\extra.css;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\spaces.svg;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\html\index.html</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating HTML documentation</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Strawberry\c\bin\doxygen.exe
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3native.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\main.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\news.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\quick.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\moving.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compile.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\build.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\intro.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\context.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\monitor.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\window.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\input.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\vulkan.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compat.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\internal.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\DoxygenLayout.xml;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\header.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\footer.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\extra.css;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\spaces.svg;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\html\index.html</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating HTML documentation</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Strawberry\c\bin\doxygen.exe
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\include\GLFW\glfw3native.h;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\main.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\news.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\quick.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\moving.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compile.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\build.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\intro.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\context.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\monitor.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\window.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\input.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\vulkan.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\compat.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\internal.md;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\DoxygenLayout.xml;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\header.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\footer.html;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\extra.css;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\spaces.svg;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\html\index.html</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/User/Desktop/test_engine -BC:/Users/User/Desktop/test_engine --check-stamp-file C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\Doxyfile.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/User/Desktop/test_engine -BC:/Users/User/Desktop/test_engine --check-stamp-file C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\Doxyfile.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/User/Desktop/test_engine -BC:/Users/User/Desktop/test_engine --check-stamp-file C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\Doxyfile.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/User/Desktop/test_engine -BC:/Users/User/Desktop/test_engine --check-stamp-file C:/Users/User/Desktop/test_engine/external/glfw-3.4/docs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\Doxyfile.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\User\Desktop\test_engine\external\glfw-3.4\docs\html\index.html">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\User\Desktop\test_engine\ZERO_CHECK.vcxproj">
+      <Project>{D93C17FB-4A0C-30AD-A5D9-609C9B31D6DB}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
